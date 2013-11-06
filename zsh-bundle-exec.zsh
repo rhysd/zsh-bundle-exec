@@ -15,11 +15,11 @@ function() {
         local d="$(pwd)"
         while [[ "$(dirname $d)" != "/" ]]; do
             if [ -f "$d/Gemfile" ]; then
+                echo $d
                 return
             fi
             d="$(dirname $d)"
         done
-        false
     }
 
     auto-bundle-exec-accept-line() {
@@ -29,22 +29,23 @@ function() {
         if [ -n "$BUNDLE_EXEC_COMMANDS" ]; then
         fi
 
-        # TODO: fix condition
         # if [[ "$command" =~ '^[[:alnum:]_-]+$' ]] && [[ "$BUNDLE_EXEC_GEMFILE_CURRENT_DIR_ONLY" == '' ]] && is-bundled || [ -f "./Gemfile" ]; then
         if [[ "$command" =~ '^[[:alnum:]_-]+$' ]]; then
             # return if not bundled
-            if [[ $BUNDLE_EXEC_GEMFILE_CURRENT_DIR_ONLY != '' ]]; then
+            local bundle_dir
+            if [[ "$BUNDLE_EXEC_GEMFILE_CURRENT_DIR_ONLY" != '' ]]; then
                 [ ! -f './Gemfile' ] && zle accept-line && return
+                bundle_dir="$(pwd)"
             else
-                [ ! "$(is-bundled)" ] && zle accept-line && return
+                bundle_dir="$(is-bundled)"
+                [[ "$bundle_dir" == '' ]] && zle accept-line && return
             fi
 
-            # TODO: remove '-rbundler' and implement which() originally
+            # get path through Ruby using bundler
             local bundler_driver="$(cat <<RUBY
 begin
   require 'fileutils'
   require 'bundler/setup'
-
   cmd = "$command"
   if File.executable?(cmd)
     print cmd
@@ -55,7 +56,7 @@ begin
     end
     executable = path && File.expand_path(cmd, path)
     print executable
-    exit !!(executable && executable.start_with?(Dir.pwd))
+    exit !!(executable && executable.start_with?("$bundle_dir"))
   end
 rescue
   exit false
