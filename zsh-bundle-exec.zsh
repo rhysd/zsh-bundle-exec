@@ -42,12 +42,23 @@ function() {
             # TODO: remove '-rbundler' and implement which() originally
             local bundler_driver="$(cat <<RUBY
 begin
-    require 'bundler'
-    require 'bundler/setup'
-    print(result = Bundler.which("$command"))
-    exit(!!result)
+  require 'fileutils'
+  require 'bundler/setup'
+
+  cmd = "$command"
+  if File.executable?(cmd)
+    print cmd
+    exit true
+  elsif ENV['PATH']
+    path = ENV['PATH'].split(File::PATH_SEPARATOR).find do |p|
+      File.executable?(File.join(p, cmd))
+    end
+    executable = path && File.expand_path(cmd, path)
+    print executable
+    exit !!(executable && executable.start_with?(Dir.pwd))
+  end
 rescue
-    exit(false)
+  exit false
 end
 RUBY)"
             local be_cmd
