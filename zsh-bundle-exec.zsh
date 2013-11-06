@@ -23,13 +23,16 @@ function() {
     }
 
     auto-bundle-exec-accept-line() {
+        # TODO: expand alias using 'alias' command
         local command="$(echo $BUFFER | cut -d ' ' -f 1 )"
 
         if [ -n "$BUNDLE_EXEC_COMMANDS" ]; then
         fi
 
+        # TODO: fix condition
         if [[ "$command" =~ '^[[:alnum:]_-]+$' ]] && [[ "$BUNDLE_EXEC_GEMFILE_CURRENT_DIR_ONLY" == '' ]] && is-bundled || [ -f "./Gemfile" ]; then
             local be_cmd
+            # TODO: remove '-rbundler' and implement which() originally
             be_cmd="$(ruby -rbundler -rbundler/setup -e "print(result = Bundler.which(\"$command\")); exit(!!result)")"
             if [[ $? != 0 ]]; then
                 zle accept-line
@@ -48,5 +51,7 @@ function() {
     else
         echo "zsh-bundle-exec: ^M is already bound" 1>&2
     fi
+
+    # TODO: bind ^J if available
 
 }
