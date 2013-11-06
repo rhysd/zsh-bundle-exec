@@ -68,8 +68,11 @@ RUBY)"
                 zle accept-line
                 return
             fi
+
+            # replace buffer
             BUFFER="bundle exec $BUFFER"
         fi
+
         zle accept-line
     }
 
@@ -82,6 +85,7 @@ RUBY)"
         echo "zsh-bundle-exec: ^M is already bound" 1>&2
     fi
 
+    # bind ^J if available
     if [[ "$(bindkey '^J' | cut -d ' ' -f 2)" == "accept-line" ]]; then
         bindkey '^J' auto_bundle_exec_accept_line
     fi
