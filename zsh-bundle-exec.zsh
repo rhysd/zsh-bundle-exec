@@ -47,7 +47,7 @@ begin
   require 'fileutils'
   require 'bundler/setup'
   cmd = "$command"
-  if File.executable?(cmd)
+  if File.file?(cmd) && File.executable?(cmd)
     print cmd
     exit true
   elsif ENV['PATH']
