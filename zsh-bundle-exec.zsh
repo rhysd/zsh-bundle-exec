@@ -31,7 +31,14 @@ function() {
 
         # TODO: fix condition
         # if [[ "$command" =~ '^[[:alnum:]_-]+$' ]] && [[ "$BUNDLE_EXEC_GEMFILE_CURRENT_DIR_ONLY" == '' ]] && is-bundled || [ -f "./Gemfile" ]; then
-        if [[ "$command" =~ '^[[:alnum:]_-]+$' ]] && is-bundled; then
+        if [[ "$command" =~ '^[[:alnum:]_-]+$' ]]; then
+            # return if not bundled
+            if [[ $BUNDLE_EXEC_GEMFILE_CURRENT_DIR_ONLY != '' ]]; then
+                [ ! -f './Gemfile' ] && zle accept-line && return
+            else
+                [ ! "$(is-bundled)" ] && zle accept-line && return
+            fi
+
             # TODO: remove '-rbundler' and implement which() originally
             local bundler_driver="$(cat <<RUBY
 begin
