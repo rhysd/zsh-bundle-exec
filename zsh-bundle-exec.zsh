@@ -28,16 +28,14 @@ function() {
         if [ -n "$BUNDLE_EXEC_COMMANDS" ]; then
         fi
 
-        if [[ "$command" =~ '^[[:alnum:]_-]+$' ]]; then
-            if [[ "$BUNDLE_EXEC_GEMFILE_CURRENT_DIR_ONLY" == '' ]] && is-bundled || [ -f "./Gemfile" ]; then
-                local be_cmd
-                be_cmd="$(ruby -rbundler -rbundler/setup -e "print(result = Bundler.which(\"$command\")); exit(!!result)")"
-                if [[ $? != 0 ]]; then
-                    zle accept-line
-                    return
-                fi
-                BUFFER="bundle exec $BUFFER"
+        if [[ "$command" =~ '^[[:alnum:]_-]+$' ]] && [[ "$BUNDLE_EXEC_GEMFILE_CURRENT_DIR_ONLY" == '' ]] && is-bundled || [ -f "./Gemfile" ]; then
+            local be_cmd
+            be_cmd="$(ruby -rbundler -rbundler/setup -e "print(result = Bundler.which(\"$command\")); exit(!!result)")"
+            if [[ $? != 0 ]]; then
+                zle accept-line
+                return
             fi
+            BUFFER="bundle exec $BUFFER"
         fi
         zle accept-line
     }
