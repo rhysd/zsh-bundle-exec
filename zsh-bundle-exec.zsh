@@ -30,10 +30,21 @@ function() {
         fi
 
         # TODO: fix condition
-        if [[ "$command" =~ '^[[:alnum:]_-]+$' ]] && [[ "$BUNDLE_EXEC_GEMFILE_CURRENT_DIR_ONLY" == '' ]] && is-bundled || [ -f "./Gemfile" ]; then
-            local be_cmd
+        # if [[ "$command" =~ '^[[:alnum:]_-]+$' ]] && [[ "$BUNDLE_EXEC_GEMFILE_CURRENT_DIR_ONLY" == '' ]] && is-bundled || [ -f "./Gemfile" ]; then
+        if [[ "$command" =~ '^[[:alnum:]_-]+$' ]] && is-bundled; then
             # TODO: remove '-rbundler' and implement which() originally
-            be_cmd="$(ruby -rbundler -rbundler/setup -e "print(result = Bundler.which(\"$command\")); exit(!!result)")"
+            local bundler_driver="$(cat <<RUBY
+begin
+    require 'bundler'
+    require 'bundler/setup'
+    print(result = Bundler.which("$command"))
+    exit(!!result)
+rescue
+    exit(false)
+end
+RUBY)"
+            local be_cmd
+            be_cmd="$(ruby -e $bundler_driver)"
             if [[ $? != 0 ]]; then
                 zle accept-line
                 return
