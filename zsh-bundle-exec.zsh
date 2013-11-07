@@ -21,12 +21,20 @@ function() {
         fi
     }
 
+    should-use-bundle(){
+        if [ -n "$BUNDLE_EXEC_COMMANDS" ]; then
+            # TODO
+            return 1
+        fi
+
+        return 0
+    }
+
     auto-bundle-exec-accept-line() {
         # TODO: expand alias using 'alias' command
         local command="$(echo $BUFFER | cut -d ' ' -f 1 )"
 
-        if [ -n "$BUNDLE_EXEC_COMMANDS" ]; then
-        fi
+        ! $(should-use-bundle "$command") && zle accept-line && return
 
         # replace buffer with bundle exec path
         if [[ "$command" =~ '^[[:alnum:]_-]+$' ]]; then
