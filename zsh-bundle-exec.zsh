@@ -46,7 +46,6 @@ function() {
             # get path through Ruby using bundler
             local bundler_driver="$(cat <<RUBY
 begin
-  require 'fileutils'
   require 'bundler/setup'
   cmd = "$command"
   if File.file?(cmd) && File.executable?(cmd)
@@ -66,7 +65,7 @@ end
 RUBY)"
             local be_cmd
             be_cmd="$(ruby -e $bundler_driver)"
-            if [[ $? == 0 ]]; then
+            if (( $? == 0 )); then
                 # replace buffer
                 # TODO do not use 'bundle exec'
                 # replace command with $be_cmd
