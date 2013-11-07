@@ -1,3 +1,6 @@
+# check if bundle command exists
+! which "bundle" > /dev/null && return
+
 # anonymous function for namespace
 function() {
 
@@ -85,8 +88,6 @@ function() {
     # if ^M key is not bound
     if [[ "$(bindkey '^M' | cut -d ' ' -f 2)" == "accept-line" ]]; then
         bindkey '^M' auto_bundle_exec_accept_line
-    else
-        echo "zsh-bundle-exec: ^M is already bound" 1>&2
     fi
 
     # bind ^J if available
