@@ -34,11 +34,13 @@ function() {
     }
 
     auto-bundle-exec-accept-line() {
+        # trim and split into command and arguments
         local trimmed="$(echo $BUFFER | tr -d ' ')"
         local command="${${trimmed}%% *}"
         local args="${${trimmed}#$command}"
-        local unaliased="${${${${$(alias $command)#*=}}#\'}%\'}"
 
+        # unalias if alias is used
+        local unaliased="${${${${$(alias $command)#*=}}#\'}%\'}"
         if [[ "$unaliased" != '' ]]; then
             command="${unaliased% *}"
             local unaliased_args="${unaliased#$command}"
