@@ -1,16 +1,6 @@
 # anonymous function for namespace
 function() {
 
-    zmodload zsh/parameter
-    local this_file="${funcsourcetrace[1]%:*}"
-
-    autoload -U is-at-least
-    if is-at-least 4.3.10; then
-        export ZSH_BUNDLE_EXEC_DIR="${this_file:A:h}"
-    else
-        export ZSH_BUNDLE_EXEC_DIR="${this_file:h}"
-    fi
-
     is-bundled() {
         local d="$(pwd)"
         while [[ "$(dirname $d)" != "/" ]]; do
