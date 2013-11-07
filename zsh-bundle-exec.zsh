@@ -80,13 +80,10 @@ function() {
         local be_cmd
         be_cmd="$(ruby -e $bundler_driver)"
         if (( $? == 0 )); then
-            # replace buffer
-            # TODO: do not use 'bundle exec'
-            # replace command with $be_cmd
             if [[ "$BUNDLE_EXEC_EXPAND_ALIASE" == '' ]]; then
                 BUFFER="bundle exec $command$args"
             else
-                # TODO
+                BUFFER="$be_cmd$args"
             fi
         fi
 
