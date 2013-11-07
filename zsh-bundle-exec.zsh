@@ -21,30 +21,30 @@ function() {
         fi
     }
 
-    should-use-bundle(){
+    is-exceptional(){
         if [ -n "$BUNDLE_EXEC_COMMANDS" ]; then
             # TODO
-            return 1
+            return 0
         fi
 
-        return 0
+        return 1
     }
 
     auto-bundle-exec-accept-line() {
         # TODO: expand alias using 'alias' command
         local command="$(echo $BUFFER | cut -d ' ' -f 1 )"
 
-        ! $(should-use-bundle "$command") && zle accept-line && return
+        # check command
+        if $(is-exceptional "$command") || [[ ! "$command" =~ '^[[:alnum:]_-]+$' ]]; then
+            zle accept-line && return
+        fi
 
-        # replace buffer with bundle exec path
-        if [[ "$command" =~ '^[[:alnum:]_-]+$' ]]; then
+        # return if not bundled
+        local bundle_dir="$(get-bundle-dir)"
+        [[ $bundle_dir == '' ]] && zle accept-line && return
 
-            # return if not bundled
-            local bundle_dir="$(get-bundle-dir)"
-            [[ $bundle_dir == '' ]] && zle accept-line && return
-
-            # get path through Ruby using bundler
-            local bundler_driver="$(cat <<RUBY
+        # get path through Ruby using bundler
+        local bundler_driver="$(cat <<RUBY
 begin
   require 'bundler/setup'
   cmd = "$command"
@@ -63,15 +63,17 @@ rescue
   exit false
 end
 RUBY)"
-            local be_cmd
-            be_cmd="$(ruby -e $bundler_driver)"
-            if (( $? == 0 )); then
-                # replace buffer
-                # TODO do not use 'bundle exec'
-                # replace command with $be_cmd
+        local be_cmd
+        be_cmd="$(ruby -e $bundler_driver)"
+        if (( $? == 0 )); then
+            # replace buffer
+            # TODO: do not use 'bundle exec'
+            # replace command with $be_cmd
+            if [[ "$BUNDLE_EXEC_EXPAND_ALIASE" == '' ]]; then
                 BUFFER="bundle exec $BUFFER"
+            else
+                # TODO
             fi
-
         fi
 
         zle accept-line
