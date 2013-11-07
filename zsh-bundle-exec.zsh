@@ -44,25 +44,26 @@ function() {
         [[ $bundle_dir == '' ]] && zle accept-line && return
 
         # get path through Ruby using bundler
-        local bundler_driver="$(cat <<RUBY
-begin
-  require 'bundler/setup'
-  cmd = "$command"
-  if File.file?(cmd) && File.executable?(cmd)
-    print cmd
-    exit true
-  elsif ENV['PATH']
-    path = ENV['PATH'].split(File::PATH_SEPARATOR).find do |p|
-      File.executable?(File.join(p, cmd))
-    end
-    executable = path && File.expand_path(cmd, path)
-    print executable
-    exit !!(executable && executable.start_with?("$bundle_dir"))
-  end
-rescue
-  exit false
-end
-RUBY)"
+        local bundler_driver="$(cat <<-RUBY
+			begin
+			  require 'bundler/setup'
+			  cmd = "$command"
+			  if File.file?(cmd) && File.executable?(cmd)
+			    print cmd
+			    exit true
+			  elsif ENV['PATH']
+			    path = ENV['PATH'].split(File::PATH_SEPARATOR).find do |p|
+			      File.executable?(File.join(p, cmd))
+			    end
+			    executable = path && File.expand_path(cmd, path)
+			    print executable
+			    exit !!(executable && executable.start_with?("$bundle_dir"))
+			  end
+			rescue
+			  exit false
+			end
+		RUBY)"
+
         local be_cmd
         be_cmd="$(ruby -e $bundler_driver)"
         if (( $? == 0 )); then
