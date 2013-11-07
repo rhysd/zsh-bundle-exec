@@ -17,7 +17,7 @@ function() {
 
     get-bundle-dir() {
         if [[ "$BUNDLE_EXEC_GEMFILE_CURRENT_DIR_ONLY" != '' ]]; then
-            [ ! -f './Gemfile' ] && zle accept-line && return
+            [ ! -f './Gemfile' ] && return
             echo "$(pwd)"
         else
             echo "$(is-bundled)"
@@ -36,6 +36,7 @@ function() {
     auto-bundle-exec-accept-line() {
         # TODO: expand alias using 'alias' command
         local command="$(echo $BUFFER | cut -d ' ' -f 1 )"
+        local unaliased="${${$(alias $command)#*'}%'*}"
 
         # check command
         if $(is-exceptional "$command") || [[ ! "$command" =~ '^[[:alnum:]_-]+$' ]]; then
