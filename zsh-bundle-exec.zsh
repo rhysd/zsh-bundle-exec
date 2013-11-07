@@ -34,9 +34,18 @@ function() {
     }
 
     auto-bundle-exec-accept-line() {
-        # TODO: expand alias using 'alias' command
-        local command="$(echo $BUFFER | cut -d ' ' -f 1 )"
-        local unaliased="${${$(alias $command)#*'}%'*}"
+        local trimmed="$(echo $BUFFER | tr -d ' ')"
+        local command="${${trimmed}%% *}"
+        local args="${${trimmed}#$command}"
+        local unaliased="${${${${$(alias $command)#*=}}#\'}%\'}"
+
+        if [[ "$unaliased" != '' ]]; then
+            command="${unaliased% *}"
+            local unaliased_args="${unaliased#$command}"
+            if [[ "$unaliased_args" != '' ]]; then
+                args="$unaliased_args $args"
+            fi
+        fi
 
         # check command
         if $(is-exceptional "$command") || [[ ! "$command" =~ '^[[:alnum:]_-]+$' ]]; then
@@ -75,7 +84,7 @@ function() {
             # TODO: do not use 'bundle exec'
             # replace command with $be_cmd
             if [[ "$BUNDLE_EXEC_EXPAND_ALIASE" == '' ]]; then
-                BUFFER="bundle exec $BUFFER"
+                BUFFER="bundle exec $command$args"
             else
                 # TODO
             fi
