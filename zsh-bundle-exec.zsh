@@ -29,7 +29,7 @@ function() {
         if [ -n "$BUNDLE_EXEC_COMMANDS" ]; then
         fi
 
-        # if [[ "$command" =~ '^[[:alnum:]_-]+$' ]] && [[ "$BUNDLE_EXEC_GEMFILE_CURRENT_DIR_ONLY" == '' ]] && is-bundled || [ -f "./Gemfile" ]; then
+        # replace buffer with bundle exec path
         if [[ "$command" =~ '^[[:alnum:]_-]+$' ]]; then
             # return if not bundled
             local bundle_dir
@@ -64,13 +64,13 @@ end
 RUBY)"
             local be_cmd
             be_cmd="$(ruby -e $bundler_driver)"
-            if [[ $? != 0 ]]; then
-                zle accept-line
-                return
+            if [[ $? == 0 ]]; then
+                # replace buffer
+                # TODO do not use 'bundle exec'
+                # replace command with $be_cmd
+                BUFFER="bundle exec $BUFFER"
             fi
 
-            # replace buffer
-            BUFFER="bundle exec $BUFFER"
         fi
 
         zle accept-line
