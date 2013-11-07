@@ -42,7 +42,7 @@ function() {
         # unalias if alias is used
         local unaliased="${${${${$(alias $command)#*=}}#\'}%\'}"
         if [[ "$unaliased" != '' ]]; then
-            command="${unaliased% *}"
+            command="${unaliased%% *}"
             local unaliased_args="${unaliased#$command}"
             if [[ "$unaliased_args" != '' ]]; then
                 args="$unaliased_args $args"
