@@ -25,16 +25,13 @@ function() {
     }
 
     is-exceptional(){
-        if [ -n "$BUNDLE_EXEC_COMMANDS" ]; then
-            local acceptables
-            acceptables=( $(echo "$BUNDLE_EXEC_COMMANDS") )
-            for cmd in "${acceptables[@]}"; do
-                [[ "$cmd" == "$1" ]] && return 1
-            done
-            return 0
-        else
-            return 1
-        fi
+        [ ! -n "$BUNDLE_EXEC_COMMANDS" ] && return 1
+        local acceptables
+        acceptables=( $(echo "$BUNDLE_EXEC_COMMANDS") )
+        for cmd in "${acceptables[@]}"; do
+            [[ "$cmd" == "$1" ]] && return 1
+        done
+        return 0
     }
 
     bundler-driver(){
