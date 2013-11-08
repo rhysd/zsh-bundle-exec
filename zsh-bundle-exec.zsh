@@ -33,6 +33,29 @@ function() {
         return 1
     }
 
+    bundler-driver(){
+        # get path through Ruby using bundler
+        cat <<-RUBY
+			begin
+			  require 'bundler/setup'
+			  cmd = "$command"
+			  if File.file?(cmd) && File.executable?(cmd)
+			    print cmd
+			    exit true
+			  elsif ENV['PATH']
+			    path = ENV['PATH'].split(File::PATH_SEPARATOR).find do |p|
+			      File.executable?(File.join(p, cmd))
+			    end
+			    executable = path && File.expand_path(cmd, path)
+			    print executable
+			    exit !!(executable && executable.start_with?("$bundle_dir"))
+			  end
+			rescue
+			  exit false
+			end
+		RUBY
+    }
+
     auto-bundle-exec-accept-line() {
         # trim and split into command and arguments
         local trimmed="$(echo $BUFFER | tr -d ' ')"
@@ -58,29 +81,8 @@ function() {
         local bundle_dir="$(get-bundle-dir)"
         [[ $bundle_dir == '' ]] && zle accept-line && return
 
-        # get path through Ruby using bundler
-        local bundler_driver="$(cat <<-RUBY
-			begin
-			  require 'bundler/setup'
-			  cmd = "$command"
-			  if File.file?(cmd) && File.executable?(cmd)
-			    print cmd
-			    exit true
-			  elsif ENV['PATH']
-			    path = ENV['PATH'].split(File::PATH_SEPARATOR).find do |p|
-			      File.executable?(File.join(p, cmd))
-			    end
-			    executable = path && File.expand_path(cmd, path)
-			    print executable
-			    exit !!(executable && executable.start_with?("$bundle_dir"))
-			  end
-			rescue
-			  exit false
-			end
-		RUBY)"
-
         local be_cmd
-        be_cmd="$(ruby -e $bundler_driver)"
+        be_cmd="$(ruby -e "$(bundler-driver)")"
         if (( $? == 0 )); then
             if [[ "$BUNDLE_EXEC_EXPAND_ALIASE" == '' ]]; then
                 BUFFER="bundle exec $command$args"
