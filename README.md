@@ -14,6 +14,9 @@ Clone this repository and write below line to your `zshenv`.
 source path/to/zsh-bundle-exec.zsh
 ```
 
+This plugin attempt to overwrite `^M` and `^J` binding.  If you already use `^M` or `^J` for other binding, this plugin doesn't overwrite it.  In the case, you should call zbe-bundle-exec-accept-line in the binding.
+
+
 ## Customization
 
 You can customize behavior of this plugin with environment variables.
@@ -43,6 +46,7 @@ It makes command execution faster because `bundle` command is not used.  However
 ```sh
 export BUNDLE_EXEC_EXPAND_ALIASE=yes
 ```
+
 
 ## License
 
