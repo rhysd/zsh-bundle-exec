@@ -4,7 +4,7 @@
 # anonymous function for namespace
 function() {
 
-    is-bundled() {
+    function zbe-is-bundled() {
         local d="$(pwd)"
         while [[ "$(dirname $d)" != "/" ]]; do
             if [ -f "$d/Gemfile" ]; then
@@ -15,16 +15,16 @@ function() {
         done
     }
 
-    get-bundle-dir() {
+    function zbe-get-bundle-dir() {
         if [[ "$BUNDLE_EXEC_GEMFILE_CURRENT_DIR_ONLY" != '' ]]; then
             [ ! -f './Gemfile' ] && return
             echo "$(pwd)"
         else
-            echo "$(is-bundled)"
+            echo "$(zbe-is-bundled)"
         fi
     }
 
-    is-exceptional(){
+    function zbe-is-exceptional(){
         [ ! -n "$BUNDLE_EXEC_COMMANDS" ] && return 1
         local acceptables
         acceptables=( $(echo "$BUNDLE_EXEC_COMMANDS") )
@@ -34,7 +34,7 @@ function() {
         return 0
     }
 
-    bundler-driver(){
+    function zbe-bundler-driver(){
         # get path through Ruby using bundler
         cat <<-RUBY
 			begin
@@ -57,10 +57,10 @@ function() {
 		RUBY
     }
 
-    auto-bundle-exec-accept-line() {
+    function zbe-auto-bundle-exec-accept-line() {
 
         # return if not bundled
-        local bundle_dir="$(get-bundle-dir)"
+        local bundle_dir="$(zbe-get-bundle-dir)"
         [[ $bundle_dir == '' ]] && zle accept-line && return
 
         # trim and split into command and arguments
@@ -79,12 +79,12 @@ function() {
         fi
 
         # check command
-        if $(is-exceptional "$command") || [[ ! "$command" =~ '^[[:alnum:]_-]+$' ]]; then
+        if $(zbe-is-exceptional "$command") || [[ ! "$command" =~ '^[[:alnum:]_-]+$' ]]; then
             zle accept-line && return
         fi
 
         local be_cmd
-        be_cmd="$(ruby -e "$(bundler-driver)")"
+        be_cmd="$(ruby -e "$(zbe-bundler-driver)")"
         if (( $? == 0 )); then
             if [[ "$BUNDLE_EXEC_EXPAND_ALIASE" == '' ]]; then
                 BUFFER="bundle exec $command$args"
@@ -96,7 +96,7 @@ function() {
         zle accept-line
     }
 
-    zle -N auto_bundle_exec_accept_line auto-bundle-exec-accept-line
+    zle -N auto_bundle_exec_accept_line zbe-auto-bundle-exec-accept-line
 
     # if ^M key is not bound
     if [[ "$(bindkey '^M' | cut -d ' ' -f 2)" == "accept-line" ]]; then
