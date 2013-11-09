@@ -14,7 +14,7 @@ Clone this repository and write below line to your `zshenv`.
 source path/to/zsh-bundle-exec.zsh
 ```
 
-This plugin attempt to overwrite `^M` and `^J` binding.  If you already use `^M` or `^J` for other binding, this plugin doesn't overwrite it.  In the case, you should call zbe-bundle-exec-accept-line in the binding.
+This plugin attempt to overwrite `^M` and `^J` binding.  If you already use `^M` or `^J` for other binding, this plugin doesn't overwrite it.  In the case, you should call `zbe-bundle-exec-accept-line` in the binding.
 
 
 ## Customization
