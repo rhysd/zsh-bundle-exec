@@ -58,6 +58,11 @@ function() {
     }
 
     auto-bundle-exec-accept-line() {
+
+        # return if not bundled
+        local bundle_dir="$(get-bundle-dir)"
+        [[ $bundle_dir == '' ]] && zle accept-line && return
+
         # trim and split into command and arguments
         local trimmed="$(echo $BUFFER | tr -d ' ')"
         local command="${${trimmed}%% *}"
@@ -77,10 +82,6 @@ function() {
         if $(is-exceptional "$command") || [[ ! "$command" =~ '^[[:alnum:]_-]+$' ]]; then
             zle accept-line && return
         fi
-
-        # return if not bundled
-        local bundle_dir="$(get-bundle-dir)"
-        [[ $bundle_dir == '' ]] && zle accept-line && return
 
         local be_cmd
         be_cmd="$(ruby -e "$(bundler-driver)")"
