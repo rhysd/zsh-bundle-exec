@@ -3,7 +3,7 @@ Never Type in `bundle exec`
 
 This is a Zsh plugin to insert `bundle exec` automatically.  It detects Gemfile, expand an alias, check the command and insert `bundle exec` nicely.
 
-{{{ screenshot here }}}
+![screenshot](http://gifzo.net/BAUT7u7dr0U.gif)
 
 
 ## How to Install and Setup
