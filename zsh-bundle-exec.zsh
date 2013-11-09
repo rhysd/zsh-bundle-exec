@@ -64,7 +64,7 @@ function() {
         [[ $bundle_dir == '' ]] && zle accept-line && return
 
         # trim and split into command and arguments
-        local trimmed="$(echo $BUFFER | tr -d ' ')"
+        local trimmed="$(echo $BUFFER | sed 's/^\s\+//' | sed 's/\s$//')"
         local command="${${trimmed}%% *}"
         local args="${${trimmed}#$command}"
 
