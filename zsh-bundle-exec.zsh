@@ -1,6 +1,10 @@
 # check if bundle command exists
 ! which "bundle" > /dev/null && return
 
+if [ ! -n "$BUNDLE_EXEC_RUBY_COMMAND" ]; then
+    export BUNDLE_EXEC_RUBY_COMMAND=ruby
+fi
+
 function zbe-is-bundled() {
     local d="$(pwd)"
     while [[ "$(dirname $d)" != "/" ]]; do
@@ -81,7 +85,7 @@ function zbe-auto-bundle-exec-accept-line() {
     fi
 
     local be_cmd
-    be_cmd="$(ruby -e "$(zbe-bundler-driver)")"
+    be_cmd="$($BUNDLE_EXEC_RUBY_COMMAND -e "$(zbe-bundler-driver)")"
     if (( $? == 0 )); then
         if [[ "$BUNDLE_EXEC_EXPAND_ALIASE" == '' ]]; then
             BUFFER="bundle exec $command$args"

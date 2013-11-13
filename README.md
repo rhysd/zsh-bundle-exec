@@ -32,7 +32,7 @@ export BUNDLE_EXEC_GEMFILE_CURRENT_DIR_ONLY=yes
 ### `$BUNDLE_EXEC_COMMANDS`
 
 If `$BUNDLE_EXEC_COMMANDS` is not empty, `bundle exec` is inserted automatically if and only if the command is included in the variable.
-Value of the variable must be space-separated value like below.
+Value of the variable must be space-separated string like below.
 
 ```sh
 export BUNDLE_EXEC_COMMANDS='rails rake rspec'
@@ -47,6 +47,14 @@ It makes command execution faster because `bundle` command is not used.  However
 export BUNDLE_EXEC_EXPAND_ALIASE=yes
 ```
 
+### `$BUNDLE_EXEC_RUBY_COMMAND`
+
+If `$BUNDLE_EXEC_RUBY_COMMAND` is not empty, zsh-bundle-exec uses the value as Ruby command.
+Otherwise, zsh-bundle-exec uses `'ruby'` as its value.
+
+```sh
+export BUNDLE_EXEC_RUBY_COMMAND=/usr/local/bin/ruby20
+```
 
 ## License
 
