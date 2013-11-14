@@ -70,13 +70,13 @@ function zbe-auto-bundle-exec-accept-line() {
     local args="${${trimmed}#$command}"
 
     # unalias if alias is used
-    local unaliased="$(alias $command)"
-    if [[ "$unaliased" != '' ]]; then
-        unaliased="${${${${${unaliased}#*=}}#\'}%\'}"
-        command="${unaliased%% *}"
-        local unaliased_args="${unaliased#$command}"
-        if [[ "$unaliased_args" != '' ]]; then
-            args="$unaliased_args $args"
+    local expanded="$(alias $command)"
+    if [[ "$expanded" != '' ]]; then
+        expanded="${${${${${expanded}#*=}}#\'}%\'}"
+        command="${expanded%% *}"
+        local expanded_args="${expanded#$command}"
+        if [[ "$expanded_args" != '' ]]; then
+            args="$expanded_args $args"
         fi
     fi
 
