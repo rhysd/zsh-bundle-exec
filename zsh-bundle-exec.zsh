@@ -70,8 +70,9 @@ function zbe-auto-bundle-exec-accept-line() {
     local args="${${trimmed}#$command}"
 
     # unalias if alias is used
-    local unaliased="${${${${$(alias $command)#*=}}#\'}%\'}"
+    local unaliased="$(alias $command)"
     if [[ "$unaliased" != '' ]]; then
+        unaliased="${${${${${unaliased}#*=}}#\'}%\'}"
         command="${unaliased%% *}"
         local unaliased_args="${unaliased#$command}"
         if [[ "$unaliased_args" != '' ]]; then
