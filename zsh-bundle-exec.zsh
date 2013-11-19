@@ -52,7 +52,9 @@ function zbe-bundler-driver(){
 		    print executable
 		    exit !!(executable && executable.start_with?("$bundle_dir"))
 		  end
-		rescue Exception
+		rescue LoadError
+		  exit false
+		rescue StandardError
 		  exit false
 		end
 	RUBY
