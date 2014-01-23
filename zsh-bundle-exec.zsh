@@ -72,7 +72,7 @@ function zbe-auto-bundle-exec-accept-line() {
     local args="${${trimmed}#$command}"
 
     # unalias if alias is used
-    local expanded="$(alias $command)"
+    local expanded="$(alias '$command')"
     if [[ "$expanded" != '' ]]; then
         expanded="${${${${${expanded}#*=}}#\'}%\'}"
         command="${expanded%% *}"
